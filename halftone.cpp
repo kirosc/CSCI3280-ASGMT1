@@ -9,42 +9,79 @@ halftone.cpp
 
 */
 
-#include "bmp.h"		//	Simple .bmp library
+#include "bmp.h" //	Simple .bmp library
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <unistd.h>
 
 #define MAX_SHADES 3
 
-#define SAFE_FREE(p)  { if(p){ free(p);  (p)=NULL;} }
+#define SAFE_FREE(p)                                                           \
+  {                                                                            \
+    if (p) {                                                                   \
+      free(p);                                                                 \
+      (p) = NULL;                                                              \
+    }                                                                          \
+  }
 
+using namespace std;
 
-int main(int argc, char** argv)
-{
-	//
-	//	Your code goes here ....
-	//
-	//	1. Open BMP file 
-	//  you can use the following parameters for testing,
-	//  remember to modify it based on the user input.
-	int imagesize = 64;
-	int patchsize = 16;
-	Bitmap image_data("monokuma.bmp"); 
-	image_data.resize(imagesize);
+inline bool file_exists(const string &name);
 
-	//	2. Load image patches
-	//
+int main(int argc, char **argv) {
+  //
+  //	Your code goes here ....
+  //
+  //	1. Open BMP file
+  //  you can use the following parameters for testing,
+  //  remember to modify it based on the user input.
+  if (argc != 4) {
+    cout << "Invalid input!" << endl;
+    cout << "Usage: halftone <input.bmp> <size1> <size2>" << endl;
+    exit(EXIT_FAILURE);
+  }
 
-	//
-	//	3. Obtain Luminance
-	//
+  if (!file_exists(argv[1])) {
+    cout << "Cannot access '" << argv[1] << "': No such file or directory"
+         << endl;
+    exit(EXIT_FAILURE);
+  }
 
-	//
-	//	4. Quantization
-	//
+  int image_size, patch_size;
 
-	//
-	//  5. Generate bmp image and parse patches according to quantized image
-	//
-	
-	//  free memory
+  try {
+    image_size = stoi(argv[2]);
+    patch_size = stoi(argv[3]);
+  } catch (...) {
+    cout << "Invalid option" << endl;
+    exit(EXIT_FAILURE);
+  }
 
-	return 0;
-} 
+  cout << image_size << " " << patch_size;
+  Bitmap image_data("monokuma.bmp");
+  image_data.resize(image_size);
+
+  //	2. Load image patches
+  //
+
+  //
+  //	3. Obtain Luminance
+  //
+
+  //
+  //	4. Quantization
+  //
+
+  //
+  //  5. Generate bmp image and parse patches according to quantized image
+  //
+
+  //  free memory
+
+  return 0;
+}
+
+inline bool file_exists(const string &name) {
+  return (access(name.c_str(), F_OK) != -1);
+}

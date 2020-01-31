@@ -159,3 +159,6 @@ _deps
 
 ### Custom
 .idea
+.theia
+halftone
+test.bmp
