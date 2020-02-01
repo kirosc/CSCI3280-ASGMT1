@@ -10,11 +10,11 @@ halftone.cpp
 */
 
 #include "bmp.h" //	Simple .bmp library
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <cmath>
 
 #define MAX_SHADES 3
 
@@ -30,7 +30,12 @@ using namespace std;
 
 inline bool file_exists(const string &name);
 
-unsigned char to_grayscale(unsigned char r, unsigned char g, unsigned char b);
+inline unsigned char to_grayscale(unsigned char r, unsigned char g,
+                                  unsigned char b);
+
+inline unsigned char quantize(unsigned char gray_value, int n);
+
+bool set_patch_image(int x, int y, Bitmap source, Bitmap &destination);
 
 int main(int argc, char **argv) {
   // Arguments and file checking
@@ -62,27 +67,35 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-	// Loading images
+  // Loading images
   Bitmap image(argv[1]);
   Bitmap patch1("patch/0.bmp");
   Bitmap patch2("patch/1.bmp");
   Bitmap patch3("patch/2.bmp");
 
-	cout << image._height << " " <<image._width << endl;
-	bool result = image.resize(image_size * patch_size);
-	cout << result << endl;
-	cout << image._height << " " <<image._width << endl;
+  cout << image._height << " " << image._width << endl;
+  image.resize(image_size);
+  patch1.resize(patch_size);
+  patch2.resize(patch_size);
+  patch3.resize(patch_size);
+  Bitmap output_image(image._width * patch_size, image._height * patch_size);
+  cout << output_image._height << " " << output_image._width << endl;
+  unsigned char r, g, b;
+  set_patch_image(0, 0, NULL, output_image);
+  output_image.getColor(0, 0, r, g, b);
+  cout << (int)r << " " << (int)g << endl;
 
-	// Transform the image to grayscale
-	for (int i = 0; i < image._height; i++) {
-		for (int j = 0; j < image._width; j++) {
-			unsigned char r, g, b, grayscale;
-			image.getColor(j, i, r, g, b);
-			grayscale = to_grayscale(r, g, b);
-			image.setColor(j, i, grayscale, grayscale, grayscale);
-		}
-	}
-	image.save("test.bmp");
+  // Transform the image to grayscale
+  for (int i = 0; i < image._height; i++) {
+    for (int j = 0; j < image._width; j++) {
+      unsigned char r, g, b, val;
+      image.getColor(j, i, r, g, b);
+      val = to_grayscale(r, g, b);
+      val = quantize(val, 3);
+      image.setColor(j, i, val, val, val);
+    }
+  }
+  image.save("test.bmp");
 
   //
   //	3. Obtain Luminance
@@ -106,6 +119,17 @@ inline bool file_exists(const string &name) {
   return (access(name.c_str(), F_OK) != -1);
 }
 
-unsigned char to_grayscale(unsigned char r, unsigned char g, unsigned char b) {
-	return (unsigned char) round(0.299 * r + 0.587 * g + 0.114 * b);
+inline unsigned char to_grayscale(unsigned char r, unsigned char g,
+                                  unsigned char b) {
+  return (unsigned char)round(0.299 * r + 0.587 * g + 0.114 * b);
+}
+
+inline unsigned char quantize(unsigned char gray_value, int n) {
+  return (unsigned char)floor(gray_value / (255 / n));
+}
+
+bool set_patch_image(int x, int y, Bitmap source, Bitmap &destination) {
+  // int patch_size = pitch1._width;
+  // destination.setColor(x, y, 255, ' ', '_');
+  return true;
 }
