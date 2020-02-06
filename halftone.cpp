@@ -35,7 +35,9 @@ inline unsigned char to_grayscale(unsigned char r, unsigned char g,
 
 inline unsigned char quantize(unsigned char gray_value, int n);
 
-bool set_patch_image(int x, int y, Bitmap source, Bitmap &destination);
+bool set_patch_image(int x, int y, Bitmap &destination);
+
+Bitmap image, patch1, patch2, patch3;
 
 int main(int argc, char **argv) {
   // Arguments and file checking
@@ -68,20 +70,21 @@ int main(int argc, char **argv) {
   }
 
   // Loading images
-  Bitmap image(argv[1]);
-  Bitmap patch1("patch/0.bmp");
-  Bitmap patch2("patch/1.bmp");
-  Bitmap patch3("patch/2.bmp");
+  image.create(argv[1]);
+  patch1.create("patch/0.bmp");
+  patch2.create("patch/1.bmp");
+  patch3.create("patch/2.bmp");
 
   cout << image._height << " " << image._width << endl;
   image.resize(image_size);
   patch1.resize(patch_size);
   patch2.resize(patch_size);
   patch3.resize(patch_size);
+  cout << image._height << " " << image._width << endl;
   Bitmap output_image(image._width * patch_size, image._height * patch_size);
   cout << output_image._height << " " << output_image._width << endl;
   unsigned char r, g, b;
-  set_patch_image(0, 0, NULL, output_image);
+  set_patch_image(0, 0, output_image);
   output_image.getColor(0, 0, r, g, b);
   cout << (int)r << " " << (int)g << endl;
 
@@ -96,14 +99,6 @@ int main(int argc, char **argv) {
     }
   }
   image.save("test.bmp");
-
-  //
-  //	3. Obtain Luminance
-  //
-
-  //
-  //	4. Quantization
-  //
 
   //
   //  5. Generate bmp image and parse patches according to quantized image
@@ -128,8 +123,8 @@ inline unsigned char quantize(unsigned char gray_value, int n) {
   return (unsigned char)floor(gray_value / (255 / n));
 }
 
-bool set_patch_image(int x, int y, Bitmap source, Bitmap &destination) {
-  // int patch_size = pitch1._width;
-  // destination.setColor(x, y, 255, ' ', '_');
+bool set_patch_image(int x, int y, Bitmap &destination) {
+  int patch_size = patch1._width;
+  //destination.setColor(x, y, 255, ' ', '_');
   return true;
 }
