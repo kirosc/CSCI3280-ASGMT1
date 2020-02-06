@@ -160,5 +160,6 @@ _deps
 ### Custom
 .idea
 .theia
+.vs
 halftone
 test.bmp
