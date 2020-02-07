@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 void pre_check(int argc, char **argv) {
     if (argc != 5) {
         cout << "Invalid input!" << endl;
-        cout << "Usage: halftone <input.bmp> <size1> <size2> <rotation_degree>" << endl;
+        cout << "Usage: halftone_bonus <input.bmp> <size1> <size2> <rotation_degree>" << endl;
         exit(EXIT_FAILURE);
     }
 
